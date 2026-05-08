@@ -1,16 +1,16 @@
-const CACHE = 'fts-v1';
+const CACHE = 'fts-v2';
 const FILES = [
   '/membres.html',
   '/index.html',
   '/manifest.json',
   '/Fts192.png',
-  '/Fts512.png'
+  '/Fts512.png',
+  '/forum.html'
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(FILES))
-  );
+  e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)));
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
@@ -19,6 +19,7 @@ self.addEventListener('activate', e => {
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
     )
   );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', e => {
@@ -30,5 +31,33 @@ self.addEventListener('fetch', e => {
         return res;
       })
       .catch(() => caches.match(e.request))
+  );
+});
+
+// ═══ NOTIFICATIONS PUSH ═══════════════════════════
+self.addEventListener('push', function(event) {
+  let data = { title: 'Fais Ton Show', body: 'Nouveau message', url: '/forum.html' };
+  try { if (event.data) data = event.data.json(); } catch(e) {}
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/Fts192.png',
+      badge: '/Fts192.png',
+      vibrate: [200, 100, 200],
+      data: { url: data.url || '/forum.html' }
+    })
+  );
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+      for (const client of clientList) {
+        if (client.url.includes('forum') && 'focus' in client) return client.focus();
+      }
+      return clients.openWindow(event.notification.data.url);
+    })
   );
 });
