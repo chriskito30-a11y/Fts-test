@@ -82,28 +82,12 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:"DM
 .msg-input::placeholder{color:#444}
 .btn-send{background:var(--red);border:none;color:var(--white);width:38px;height:38px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;font-size:1rem}
 .btn-send:hover{background:#b71815}
-.btn-attach{background:transparent;border:1px solid var(--border);color:var(--muted);width:38px;height:38px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;font-size:1rem}
-.btn-attach:hover{border-color:var(--gold);color:var(--gold)}
-.upload-bar{display:none;padding:.5rem 1.4rem;background:#0e0e0e;border-top:1px solid var(--border);font-size:.72rem;color:var(--muted);flex-shrink:0;align-items:center;gap:.8rem}
-.upload-bar.show{display:flex}
-.upload-track{flex:1;background:#2a2a2a;border-radius:2px;height:4px;overflow:hidden}
-.upload-fill{height:100%;background:var(--red);width:0%;transition:width .2s;border-radius:2px}
-.msg-img{max-width:100%;max-height:260px;border-radius:3px;margin-top:.3rem;display:block;cursor:pointer}
-.msg-video{max-width:100%;max-height:260px;border-radius:3px;margin-top:.3rem;display:block}
-.msg-pdf{display:inline-flex;align-items:center;gap:.5rem;margin-top:.3rem;padding:.4rem .8rem;background:#141414;border:1px solid var(--border);border-radius:3px;font-size:.75rem;color:var(--gold);text-decoration:none}
-.msg-pdf:hover{border-color:var(--gold)}
 
 /* MODIFICATION : STYLE DES PILLS (Nouveau) */
-.pill-container{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.4rem}
-.pill{background:#141414;border:1px solid var(--border);padding:.4rem .8rem;border-radius:20px;font-size:.75rem;cursor:pointer;transition:all .18s;color:var(--muted);user-select:none}
-.pill:hover{border-color:var(--gold);color:var(--white)}
-.pill.active{background:var(--red);border-color:var(--red);color:var(--white);font-weight:500}
-.sub-group{margin-bottom:.9rem}
-.sub-group-lbl{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.45rem;display:flex;align-items:center;gap:.4rem}
-.sub-group-lbl::after{content:"";flex:1;height:1px;background:#2a2a2a}
-.no-sub-note{font-size:.7rem;color:#555;font-style:italic;padding:.3rem 0}
-.pills-loading{font-size:.72rem;color:var(--muted);padding:.4rem 0}
-.pills-error{font-size:.72rem;color:#aa5a5a;padding:.4rem 0}
+.pill-container{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+.pill{background:#141414;border:1px solid var(--border);padding:.4rem .7rem;border-radius:3px;font-size:.75rem;cursor:pointer;transition:all .15s;color:var(--muted);user-select:none}
+.pill:hover{border-color:#444;color:var(--white)}
+.pill.active{background:var(--red);border-color:var(--red);color:white;font-weight:500}
 
 /* Modals */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
@@ -133,6 +117,19 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:"DM
   .msg{max-width:88%}
   .input-area{padding:.7rem .8rem;padding-bottom:calc(.7rem + env(safe-area-inset-bottom))}
 }
+.btn-notif{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.35rem .8rem;border-radius:20px;cursor:pointer;font-size:.68rem;transition:all .2s;width:100%;text-align:left}
+.btn-notif:hover{border-color:var(--gold);color:var(--gold)}
+.btn-notif.on{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
+.notif-banner{background:linear-gradient(135deg,rgba(212,32,26,.15),rgba(201,168,76,.1));border-bottom:1px solid rgba(212,32,26,.3);padding:.8rem 1.4rem;display:flex;align-items:center;gap:.8rem;cursor:pointer;flex-shrink:0;transition:background .2s}
+.notif-banner:hover{background:linear-gradient(135deg,rgba(212,32,26,.25),rgba(201,168,76,.15))}
+.notif-banner.hidden{display:none}
+.notif-banner-icon{font-size:1.4rem;flex-shrink:0}
+.notif-banner-text{flex:1}
+.notif-banner-title{font-size:.8rem;font-weight:500;color:var(--white);margin-bottom:.1rem}
+.notif-banner-sub{font-size:.68rem;color:var(--muted)}
+.notif-banner-btn{background:var(--red);border:none;color:var(--white);padding:.45rem 1rem;border-radius:20px;font-size:.75rem;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.notif-banner-close{background:transparent;border:none;color:#555;font-size:1rem;cursor:pointer;padding:.2rem;flex-shrink:0;line-height:1}
+.notif-banner-close:hover{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -152,9 +149,11 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:"DM
       </div>
     </div>
     
-    <label class="modal-label">Discipline(s) — clique pour sélectionner</label>
-    <div class="pill-container" id="reg-cat-pills"><span class="pills-loading">Chargement des disciplines…</span></div>
-    <div id="reg-sub-groups"></div>
+    <label class="modal-label">Discipline(s)</label>
+    <div class="pill-container" id="reg-cat-pills"></div>
+    
+    <label class="modal-label">Créneau(x)</label>
+    <div class="pill-container" id="reg-sub-pills"></div>
     
     <div class="modal-err" id="reg-err"></div>
     <button class="modal-btn" onclick="submitRegistration()">Rejoindre le forum →</button>
@@ -185,7 +184,8 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:"DM
     </div>
     <div class="channels-lbl">Canaux</div>
     <div class="channel-list" id="channel-list"></div>
-    <div class="sidebar-footer">
+    <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:.5rem">
+      <button class="btn-notif" id="btn-notif" onclick="toggleNotifications()">🔕 Activer les notifs</button>
       <a class="back-link" href="membres.html">← Espace membres</a>
     </div>
   </div>
@@ -206,15 +206,18 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:"DM
         <button class="btn-admin-gear" id="btn-gear" onclick="openAdminModal()">⚙️</button>
       </div>
     </div>
-    <div class="messages" id="messages"></div>
-    <div class="upload-bar" id="upload-bar">
-      <span id="upload-txt">Upload en cours…</span>
-      <div class="upload-track"><div class="upload-fill" id="upload-fill"></div></div>
+    <div class="notif-banner hidden" id="notif-banner">
+      <span class="notif-banner-icon">🔔</span>
+      <div class="notif-banner-text">
+        <div class="notif-banner-title">Ne rate aucun message !</div>
+        <div class="notif-banner-sub">Active les notifications pour ton groupe</div>
+      </div>
+      <button class="notif-banner-btn" onclick="activerNotifs()">Activer</button>
+      <button class="notif-banner-close" onclick="fermerBanniere()">✕</button>
     </div>
+    <div class="messages" id="messages"></div>
     <div class="input-area">
       <div class="input-row">
-        <input type="file" id="file-input" accept="image/*,video/*,.pdf,.mp3" style="display:none" onchange="uploadMedia(this.files[0])">
-        <button class="btn-attach" onclick="document.getElementById('file-input').click()" title="Joindre un fichier">📎</button>
         <div class="input-wrap">
           <textarea class="msg-input" id="msg-input" placeholder="Écris un message…" rows="1"
             onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
@@ -237,8 +240,8 @@ const FIREBASE_CONFIG = {
 };
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6zQRcJLBGzmnrMQcFnnfiUwNTUbFTmL3Cg3Wv9HP6p9DXIVHlNdLd07a-QETaHX5NQ4mUr78lx_ox/pub?gid=199619478&single=true&output=csv";
 const ADMIN_PWD = "admin2026";
-const CLOUD_NAME = "dsylvtwqr";
-const UPLOAD_PRESET = "FaisTonShow";
+const WORKER_URL = "https://fts-push.gros-christophe.workers.dev";
+const VAPID_PUBLIC_KEY = "BNenngaKqOtgqvFSo2KJipS0AwVChpzacAX5YSNZmizWLeji07auoKRZBMbOxRljvqz89QigB6esPcHfEDS_nik";
 
 let db, firebaseOk = false;
 let uid, userData;
@@ -265,7 +268,6 @@ document.addEventListener("DOMContentLoaded",async function(){
 async function loadGroups(){
   try{
     const r=await fetch(SHEET_URL);
-    if(!r.ok) throw new Error("HTTP "+r.status);
     const text=await r.text();
     const rows=parseCSV(text);
     allGroups=[];
@@ -273,12 +275,8 @@ async function loadGroups(){
       const cat=(row[0]||"").trim(), sub=(row[1]||"").trim();
       if(cat){ allGroups.push({cat,sub}); }
     });
-    if(allGroups.length){ buildCatPills(); }
-    else{ document.getElementById("reg-cat-pills").innerHTML='<span class="pills-error">Aucune discipline trouvée dans le Sheet.</span>'; }
-  }catch(e){
-    console.error("Sheet:",e);
-    document.getElementById("reg-cat-pills").innerHTML='<span class="pills-error">Impossible de charger les disciplines. Vérifie que le Sheet est bien publié.</span>';
-  }
+    buildCatPills();
+  }catch(e){ console.error(e); }
 }
 
 function parseCSV(t){
@@ -293,7 +291,7 @@ function parseCSV(t){
   return r;
 }
 
-// MODIFICATION : Pills groupées par discipline
+// MODIFICATION : Utilisation des Pills
 function buildCatPills(){
   const cats=[...new Set(allGroups.map(g => g.cat))];
   const cont=document.getElementById("reg-cat-pills");
@@ -302,18 +300,18 @@ function buildCatPills(){
 
 function togglePill(el, type){
   el.classList.toggle("active");
-  if(type==="cat") updateSubGroups();
+  if(type==='cat') updateSubPills();
 }
 
-function updateSubGroups(){
-  const activeSubs=Array.from(document.querySelectorAll(".sub-pills .pill.active")).map(p=>p.textContent);
-  const activeCats=Array.from(document.querySelectorAll("#reg-cat-pills .pill.active")).map(p=>p.textContent);
-  const wrap=document.getElementById("reg-sub-groups");
-  if(!activeCats.length){wrap.innerHTML="";return;}
-  wrap.innerHTML=activeCats.map(cat=>{
-    const subs=[...new Set(allGroups.filter(g=>g.cat===cat&&g.sub).map(g=>g.sub))];
-    if(!subs.length) return `<div class="sub-group"><div class="sub-group-lbl">${catIcon(cat)} ${esc(cat)}</div><p class="no-sub-note">Pas de créneau spécifique pour cette discipline.</p></div>`;
-    return `<div class="sub-group"><div class="sub-group-lbl">${catIcon(cat)} ${esc(cat)}</div><div class="pill-container sub-pills">${subs.map(s=>`<div class="pill${activeSubs.includes(s)?" active":""}" onclick="togglePill(this,'sub')">${esc(s)}</div>`).join("")}</div></div>`;
+function updateSubPills(){
+  const activeCats = Array.from(document.querySelectorAll("#reg-cat-pills .pill.active")).map(p => p.textContent);
+  const subs = [...new Set(allGroups.filter(g => activeCats.includes(g.cat)).map(g => g.sub).filter(Boolean))];
+  const cont = document.getElementById("reg-sub-pills");
+  const currentActive = Array.from(document.querySelectorAll("#reg-sub-pills .pill.active")).map(p => p.textContent);
+  
+  cont.innerHTML = subs.map(s => {
+    const isActive = currentActive.includes(s) ? " active" : "";
+    return `<div class="pill${isActive}" onclick="togglePill(this,'sub')">${esc(s)}</div>`;
   }).join("");
 }
 
@@ -326,7 +324,7 @@ async function submitRegistration(){
   const first=document.getElementById("reg-first").value.trim();
   const last=document.getElementById("reg-last").value.trim();
   const cats=Array.from(document.querySelectorAll("#reg-cat-pills .pill.active")).map(p => p.textContent);
-  const subs=Array.from(document.querySelectorAll(".sub-pills .pill.active")).map(p => p.textContent);
+  const subs=Array.from(document.querySelectorAll("#reg-sub-pills .pill.active")).map(p => p.textContent);
 
   if(!first){document.getElementById("reg-err").textContent="Prénom requis.";return;}
   if(cats.length===0){document.getElementById("reg-err").textContent="Choisis au moins une discipline.";return;}
@@ -352,11 +350,17 @@ function editRegistration(){
   if(!userData)return;
   document.getElementById("reg-first").value = userData.name.split(" ")[0];
   document.getElementById("reg-last").value = userData.name.split(" ").slice(1).join(" ");
-  const cats=(userData.group||"").split(", ").filter(Boolean);
-  const subs=(userData.subgroup||"").split(", ").filter(Boolean);
-  document.querySelectorAll("#reg-cat-pills .pill").forEach(p=>{p.classList.toggle("active",cats.includes(p.textContent));});
-  updateSubGroups();
-  document.querySelectorAll(".sub-pills .pill").forEach(p=>{p.classList.toggle("active",subs.includes(p.textContent));});
+  
+  const cats = (userData.group||"").split(", ");
+  const subs = (userData.subgroup||"").split(", ");
+  
+  document.querySelectorAll("#reg-cat-pills .pill").forEach(p => {
+    p.classList.toggle("active", cats.includes(p.textContent));
+  });
+  updateSubPills();
+  document.querySelectorAll("#reg-sub-pills .pill").forEach(p => {
+    p.classList.toggle("active", subs.includes(p.textContent));
+  });
   showRegModal();
 }
 
@@ -378,6 +382,7 @@ function enterForum(){
   updateStatusUI();
   renderChannels();
   switchChannel("general");
+  checkNotifStatus();
 }
 
 function updateStatusUI(){
@@ -437,6 +442,7 @@ function sendMessage(){
   const txt=input.value.trim();
   if(!txt)return;
   db.ref("fts_forum/messages/"+currentChannel).push({name:userData.name, text:txt, ts:Date.now()});
+  notifyChannel(currentChannel, userData.name+" : "+txt.substring(0,80));
   input.value=""; input.style.height="";
 }
 
@@ -444,15 +450,10 @@ function appendMsg(m, own, key){
   const wrap=document.getElementById("messages");
   const div=document.createElement("div");
   div.className="msg "+(own?"own":"other");
-  const isMedia = m.text && m.text.startsWith("[media]");
-  const mediaUrl = isMedia ? m.text.slice(7) : null;
   div.innerHTML=`
     <div class="msg-meta">${!own?`<span class="msg-author">${esc(m.name)}</span>`:""} <span>${new Date(m.ts).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</span></div>
-    ${isMedia
-      ? `<div class="msg-bubble">${renderMedia(mediaUrl)}</div>`
-      : `<div class="msg-bubble">${esc(m.text).replace(/\n/g,"<br>")}</div>`
-    }
-    ${adminMode?`<button class="btn-del-msg" onclick="deleteMsg('${key}')">🗑</button>`:""}`;
+    ${isMedia?`<div class="msg-bubble">${renderMedia(mediaUrl)}</div>`:`<div class="msg-bubble">${esc(m.text).replace(/\n/g,"<br>")}</div>`}
+    ${adminMode?`<button class="btn-del-msg" onclick="deleteMsg('${key}')">\U0001F5D1</button>`:""}`;
   wrap.appendChild(div); scrollBottom();
 }
 
@@ -463,87 +464,81 @@ function checkAdminPwd(){
   if(document.getElementById("admin-pwd-input").value===ADMIN_PWD){ closeAdminModal(); adminMode=true; document.getElementById("admin-bar").classList.add("show"); switchChannel(currentChannel); }
 }
 function exitAdmin(){ adminMode=false; document.getElementById("admin-bar").classList.remove("show"); switchChannel(currentChannel); }
-function uploadMedia(file){
-  if(!file)return;
-  if(file.size>100*1024*1024){alert("Fichier trop volumineux (max 100 Mo)");return;}
-  const bar=document.getElementById("upload-bar");
-  const fill=document.getElementById("upload-fill");
-  const txt=document.getElementById("upload-txt");
-  bar.classList.add("show");
-  fill.style.width="0%";
-  fill.style.background="var(--red)";
-  txt.textContent="Upload en cours…";
-  const fd=new FormData();
-  // Garde le vrai nom du fichier (sans l'extension pour Cloudinary)
-  const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_");
-  fd.append("file",file);
-  fd.append("upload_preset",UPLOAD_PRESET);
-  fd.append("public_id", "forum/" + cleanName);
-  fd.append("resource_type","auto");
-  const xhr=new XMLHttpRequest();
-  xhr.open("POST","https://api.cloudinary.com/v1_1/"+CLOUD_NAME+"/auto/upload");
-  xhr.upload.onprogress=function(e){
-    if(e.lengthComputable){
-      const pct=Math.round(e.loaded/e.total*100);
-      fill.style.width=pct+"%";
-      txt.textContent="Upload "+pct+"%…";
-    }
-  };
-  xhr.onload=function(){
-    if(xhr.status===200){
-      const res=JSON.parse(xhr.responseText);
-      fill.style.background="#22c55e";
-      txt.textContent="✓ "+file.name;
-      setTimeout(function(){bar.classList.remove("show");},2000);
-      document.getElementById("file-input").value="";
-      // Send as message with special prefix
-      if(firebaseOk&&userData){
-        db.ref("fts_forum/messages/"+currentChannel).push({
-          name:userData.name, text:"[media]"+res.secure_url, ts:Date.now()
-        });
-      }
-    }else{
-      txt.textContent="Erreur upload";
-      setTimeout(function(){bar.classList.remove("show");},3000);
-    }
-  };
-  xhr.onerror=function(){
-    txt.textContent="Erreur réseau";
-    setTimeout(function(){bar.classList.remove("show");},3000);
-  };
-  xhr.send(fd);
-}
-function renderMedia(url){
-  // Cloudinary URLs: detect type from the path (/image/, /video/, /raw/)
-  const isCloudImg = url.includes("/image/upload/");
-  const isCloudVideo = url.includes("/video/upload/");
-  const ext = url.split("?")[0].split(".").pop().toLowerCase();
-  const isImg   = isCloudImg  || ["jpg","jpeg","png","gif","webp"].includes(ext);
-  const isVideo = (isCloudVideo && !["mp3","wav","ogg","aac","m4a"].includes(ext)) || ["mp4","mov","webm"].includes(ext);
-  const isAudio = ["mp3","wav","ogg","aac","m4a"].includes(ext) || (isCloudVideo && ["mp3","wav","ogg","aac","m4a"].includes(ext));
-  const isPdf   = ext === "pdf";
-
-  if(isImg)
-    return `<img class="msg-img" src="${url}" onclick="window.open('${url}')">`;
-  if(isVideo)
-    return `<video class="msg-video" src="${url}" controls playsinline></video>`;
-  if(isAudio){
-    const fname = decodeURIComponent(url.split("/").pop().split("?")[0]);
-    return `<div style="margin-top:.4rem">
-      <div style="font-size:.72rem;color:var(--gold);margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem">🎵 ${fname}</div>
-      <audio controls preload="none" style="width:100%;min-width:200px;display:block">
-        <source src="${url}" type="audio/mpeg">
-      </audio>
-      <a href="${url}" target="_blank" style="font-size:.65rem;color:var(--muted);text-decoration:none;display:block;margin-top:.2rem">Écouter / Télécharger</a>
-    </div>`;
-  }
-  if(isPdf)
-    return `<a class="msg-pdf" href="${url}" target="_blank">📄 Ouvrir le PDF</a>`;
-  return `<a class="msg-pdf" href="${url}" target="_blank">📎 Fichier joint</a>`;
-}
-
 function handleKey(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function autoResize(el){el.style.height="auto";el.style.height=el.scrollHeight+"px";}
+
+// ═══ NOTIFICATIONS PUSH ══════════════════════════
+function urlBase64ToUint8Array(b64){
+  const pad="=".repeat((4-b64.length%4)%4);
+  const base64=(b64+pad).replace(/-/g,"+").replace(/_/g,"/");
+  const raw=window.atob(base64);
+  const arr=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+async function getSubscription(){
+  if(!("serviceWorker" in navigator)) return null;
+  const reg=await navigator.serviceWorker.ready;
+  return reg.pushManager.getSubscription();
+}
+async function checkNotifStatus(){
+  const sub=await getSubscription();
+  updateNotifBtn(!!sub);
+  // Affiche la bannière si pas abonné et pas refusée
+  const banner=document.getElementById("notif-banner");
+  if(!sub && Notification.permission!=="denied" && !storageGet("fts_notif_dismissed")){
+    banner.classList.remove("hidden");
+  }else{
+    banner.classList.add("hidden");
+  }
+}
+async function activerNotifs(){
+  document.getElementById("notif-banner").classList.add("hidden");
+  await subscribePush();
+}
+function fermerBanniere(){
+  document.getElementById("notif-banner").classList.add("hidden");
+  storageSet("fts_notif_dismissed","1");
+}
+function updateNotifBtn(on){
+  const btn=document.getElementById("btn-notif");
+  if(!btn)return;
+  btn.textContent=on?"🔔 Notifs activées":"🔕 Activer les notifs";
+  btn.classList.toggle("on",on);
+}
+async function toggleNotifications(){
+  const sub=await getSubscription();
+  if(sub){
+    await sub.unsubscribe();
+    fetch(WORKER_URL+"/unsubscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({uid})}).catch(()=>{});
+    updateNotifBtn(false);
+  }else{ await subscribePush(); }
+}
+async function subscribePush(){
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){alert("Autorise les notifications pour continuer.");return;}
+    const reg=await navigator.serviceWorker.ready;
+    const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)});
+    await fetch(WORKER_URL+"/subscribe",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({uid,subscription:sub.toJSON(),group:userData?userData.group:"",subgroup:userData?userData.subgroup:""})
+    });
+    updateNotifBtn(true);
+  }catch(e){console.error("Push:",e);alert("Erreur notifications : "+e.message);}
+}
+function notifyChannel(channel,body){
+  const ch=getUserChannels().find(c=>c.id===channel)||{name:"Forum"};
+  let group="",subgroup="";
+  if(userData){
+    (userData.group||"").split(", ").forEach(g=>{if(norm(g)===channel)group=g;});
+    (userData.subgroup||"").split(", ").forEach(s=>{if(norm(s)===channel)subgroup=s;});
+  }
+  fetch(WORKER_URL+"/notify",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({group,subgroup,title:"FTS — "+ch.name,body,url:"/forum.html"})
+  }).catch(()=>{});
+}
 </script>
 </body>
 </html>
