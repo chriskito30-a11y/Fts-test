@@ -524,13 +524,16 @@ function renderMedia(url){
     return `<img class="msg-img" src="${url}" onclick="window.open('${url}')">`;
   if(isVideo)
     return `<video class="msg-video" src="${url}" controls playsinline></video>`;
-  if(isAudio)
+  if(isAudio){
+    const fname = decodeURIComponent(url.split("/").pop().split("?")[0]);
     return `<div style="margin-top:.4rem">
+      <div style="font-size:.72rem;color:var(--gold);margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem">🎵 ${fname}</div>
       <audio controls preload="none" style="width:100%;min-width:200px;display:block">
         <source src="${url}" type="audio/mpeg">
       </audio>
-      <a href="${url}" target="_blank" style="font-size:.65rem;color:var(--muted);text-decoration:none;display:block;margin-top:.2rem">🎵 Écouter / Télécharger</a>
+      <a href="${url}" target="_blank" style="font-size:.65rem;color:var(--muted);text-decoration:none;display:block;margin-top:.2rem">Écouter / Télécharger</a>
     </div>`;
+  }
   if(isPdf)
     return `<a class="msg-pdf" href="${url}" target="_blank">📄 Ouvrir le PDF</a>`;
   return `<a class="msg-pdf" href="${url}" target="_blank">📎 Fichier joint</a>`;
