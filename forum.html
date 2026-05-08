@@ -474,8 +474,11 @@ function uploadMedia(file){
   fill.style.background="var(--red)";
   txt.textContent="Upload en cours…";
   const fd=new FormData();
+  // Garde le vrai nom du fichier (sans l'extension pour Cloudinary)
+  const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_");
   fd.append("file",file);
   fd.append("upload_preset",UPLOAD_PRESET);
+  fd.append("public_id", "forum/" + cleanName);
   fd.append("resource_type","auto");
   const xhr=new XMLHttpRequest();
   xhr.open("POST","https://api.cloudinary.com/v1_1/"+CLOUD_NAME+"/auto/upload");
