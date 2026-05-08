@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Profs - Fais Ton Show</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#0a0a0a;--white:#f5f2ee;--red:#d4201a;--gold:#c9a84c;--grey:#1c1c1c;--muted:#888;--border:#2a2a2a}
+html,body{min-height:100%;background:var(--black);color:var(--white);font-family:"DM Sans",sans-serif}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--gold));z-index:100}
+.wrap{max-width:560px;margin:0 auto;padding:2rem 1.5rem}
+.hdr{text-align:center;margin-bottom:2rem;padding-top:2rem}
+.ey{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+h1{font-family:"Bebas Neue",sans-serif;font-size:3rem;line-height:.9;margin-bottom:.4rem}
+h1 span{color:var(--red)}
+.badge{display:inline-block;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;background:rgba(212,32,26,.1);border:1px solid rgba(212,32,26,.3);color:var(--red);padding:.2rem .7rem;border-radius:2px;margin-top:.6rem}
+.card{background:var(--grey);border:1px solid var(--border);border-radius:4px;padding:1.8rem;margin-bottom:1.2rem}
+.card-title{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.field{margin-bottom:1.2rem}
+label{display:block;font-size:.72rem;color:var(--muted);margin-bottom:.4rem}
+select,input,textarea{width:100%;background:#141414;border:1px solid var(--border);border-radius:3px;color:var(--white);font-family:"DM Sans",sans-serif;font-size:.9rem;padding:.65rem .9rem;outline:none;-webkit-appearance:none;appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.5rem;cursor:pointer}
+select:focus,input:focus,textarea:focus{border-color:var(--red)}
+textarea{resize:vertical;min-height:90px;line-height:1.6}
+.divider{border:none;border-top:1px dashed var(--border);margin:1.2rem 0}
+.opt-label{font-size:.7rem;color:var(--muted);font-style:italic;margin-bottom:.8rem}
+.btn{width:100%;background:var(--red);border:none;color:var(--white);padding:.9rem;border-radius:3px;cursor:pointer;font-family:"Bebas Neue",sans-serif;font-size:1.1rem;letter-spacing:.12em;transition:background .2s}
+.btn:hover{background:#b71815}
+.btn:disabled{background:#444;cursor:not-allowed}
+.btn-lock{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:.75rem;border-radius:3px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:.88rem}
+.pi{width:100%;background:#141414;border:1px solid var(--border);border-radius:3px;color:var(--white);font-size:.95rem;padding:.75rem;outline:none;text-align:center;letter-spacing:.2em;margin-bottom:.6rem}
+.pe{font-size:.72rem;color:var(--red);margin-bottom:.6rem;min-height:1em}
+.remember{display:flex;align-items:center;gap:.5rem;justify-content:center;margin-bottom:.8rem;cursor:pointer}
+.remember input{display:none}
+.remember .box{width:16px;height:16px;border:1px solid var(--gold);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.remember input:checked + .box{background:var(--gold)}
+.remember input:checked + .box::after{content:"✓";font-size:11px;color:#0a0a0a;font-weight:bold}
+.remember span{font-size:.72rem;color:var(--muted)}
+.remember label{font-size:.72rem;color:var(--muted);margin:0}
+.msg{padding:.75rem 1rem;border-radius:3px;font-size:.82rem;margin-top:1rem;display:none}
+.msg.error{background:rgba(212,32,26,.1);border:1px solid rgba(212,32,26,.3);color:#ff6b6b}
+.msg.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#4ade80}
+.ft{text-align:center;font-size:.65rem;color:#333;margin-top:2rem;padding-bottom:2rem}
+.ft a{color:#444;text-decoration:none}
+#drop-zone:hover{border-color:var(--red);color:var(--white)}
+#drop-zone.dragover{border-color:var(--gold);background:rgba(201,168,76,.05)}
+#form-card{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr"><div class="ey">Fais Ton Show</div><h1>ESPACE<br><span>PROFS</span></h1><div class="badge">Acces restreint</div></div>
+  <div class="card" id="lock-screen">
+    <div class="card-title">Connexion</div>
+    <input type="password" class="pi" id="lpi" placeholder="Mot de passe">
+    <div class="pe" id="lpe"></div>
+    <label class="remember" for="lremember"><input type="checkbox" id="lremember"><div class="box"></div><span>Se souvenir de moi</span></label>
+    <button class="btn-lock" onclick="chkLock()">Acceder</button>
+  </div>
+  <div class="card" id="form-card">
+    <div class="card-title">Publier un contenu</div>
+    <div class="field"><label>Categorie</label><select id="f-cat" onchange="updateSubcats()"><option value="">-- Choisir --</option>
+<option value="Theatre">🎭 Theatre</option>
+<option value="Chant">🎤 Chant</option>
+<option value="Danse">💃 Danse</option>
+<option value="Musique">🎸 Musique</option>
+<option value="Singer Academy">⭐ Singer Academy</option>
+<option value="Comedie Musicale">🎬 Comedie Musicale</option>
+<option value="Singer Show">🌟 Singer Show</option>
+<option value="Atelier ">🎨 Atelier </option>
+    </select></div>
+    <div class="field" id="subcat-row" style="display:none"><label>Section (optionnel)</label><select id="f-subcat"><option value="">-- Aucune --</option></select></div>
+    <div class="field"><label>Type de contenu</label><select id="f-type" onchange="updateType()"><option value="pdf">Document PDF</option><option value="mp3">Audio / MP3</option><option value="video">Video</option><option value="image">Image</option><option value="texte">Texte / Message</option><option value="doc">Autre lien</option></select></div>
+    <div class="field"><label>Titre</label><input type="text" id="f-name" placeholder="Ex: Partition cours 3..."></div>
+    <div class="field" id="url-row"><label id="url-label">Lien (Google Drive, YouTube...)</label><input type="text" id="f-url" placeholder="https://..."></div>
+    <div class="field" id="upload-row"><label>Ou glisse ton fichier directement</label><div id="drop-zone" onclick="document.getElementById('f-file').click()" style="border:2px dashed #2a2a2a;border-radius:3px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;color:var(--muted);font-size:.82rem"><div id="drop-text">Glisse ton fichier ici ou clique pour choisir</div><div id="upload-progress" style="display:none;margin-top:.5rem"><div style="background:#2a2a2a;border-radius:2px;height:4px;overflow:hidden"><div id="progress-bar" style="background:var(--red);height:100%;width:0%;transition:width .3s"></div></div><div id="progress-text" style="font-size:.72rem;margin-top:.4rem;color:var(--gold)">Upload en cours...</div></div></div><input type="file" id="f-file" style="display:none" accept=".pdf,.mp3,.mp4,.jpg,.jpeg,.png,.gif,.doc,.docx,.ppt,.pptx"></div>
+    <hr class="divider">
+    <div class="opt-label">Optionnel - Note (ajoutera une 2e ligne)</div>
+    <div class="field"><textarea id="f-text" placeholder="Ex: Pensez a apporter vos partitions..."></textarea></div>
+    <div id="msg" class="msg"></div>
+    <button class="btn" id="btn-submit" onclick="doSubmit()">Publier</button>
+  </div>
+  <footer class="ft"><a href="membres.html">Espace membres</a></footer>
+</div>
+<script>
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycby0VF50V2UGWLZ-65GeeeHlibSrZhqqcx1IHQ8-bkrGmsxCBO3hkYZrMiCnE1GqTgEBNg/exec";
+var PWD="profs2026";
+var SUBCATS={"Theatre":["7/9 ans","10/12 ans","13/15 ans","Impro","10/17 ans - Lundi","Adultes - Lundi","Adultes - Vendredi"],"Danse":["Les Baby Show","Show Danse Junior","Ados / Adultes"],"Musique":["Guitare","Basse","Batterie","Piano","Formation Musicale"],"Singer Academy":["Loisir","Spectacle"],"Comedie Musicale":["Kids","Enfants","Adultes"]};
+var CLOUD_NAME="dsylvtwqr";
+var UPLOAD_PRESET="FaisTonShow";
+(function(){var s=localStorage.getItem("fts_profs_pwd");if(s===PWD){document.getElementById("lock-screen").style.display="none";document.getElementById("form-card").style.display="block";}})();
+function chkLock(){if(document.getElementById("lpi").value===PWD){if(document.getElementById("lremember").checked){localStorage.setItem("fts_profs_pwd",PWD);}document.getElementById("lock-screen").style.display="none";document.getElementById("form-card").style.display="block";}else{document.getElementById("lpe").textContent="Mot de passe incorrect";document.getElementById("lpi").value="";}}
+document.getElementById("lpi").addEventListener("keydown",function(e){if(e.key==="Enter")chkLock();});
+function updateSubcats(){var cat=document.getElementById("f-cat").value;var row=document.getElementById("subcat-row");var sel=document.getElementById("f-subcat");sel.innerHTML='<option value="">-- Aucune --</option>';if(SUBCATS[cat]){SUBCATS[cat].forEach(function(s){var o=document.createElement("option");o.value=s;o.textContent=s;sel.appendChild(o);});row.style.display="block";}else{row.style.display="none";}}
+function updateType(){var t=document.getElementById("f-type").value;document.getElementById("url-row").style.display=t==="texte"?"none":"block";document.getElementById("upload-row").style.display=t==="texte"?"none":"block";var labels={pdf:"Lien Google Drive (PDF)",mp3:"Lien audio",video:"Lien YouTube ou Drive",image:"Lien image",doc:"Lien"};document.getElementById("url-label").textContent=labels[t]||"Lien";}
+var dropZone=document.getElementById("drop-zone");dropZone.addEventListener("dragover",function(e){e.preventDefault();dropZone.classList.add("dragover");});dropZone.addEventListener("dragleave",function(){dropZone.classList.remove("dragover");});dropZone.addEventListener("drop",function(e){e.preventDefault();dropZone.classList.remove("dragover");var file=e.dataTransfer.files[0];if(file)uploadFile(file);});document.getElementById("f-file").addEventListener("change",function(){if(this.files[0])uploadFile(this.files[0]);});
+function uploadFile(file){if(file.size>100*1024*1024){showMsg("Fichier trop volumineux (max 100MB)","error");return;}document.getElementById("upload-progress").style.display="block";document.getElementById("drop-text").style.display="none";document.getElementById("progress-bar").style.width="0%";document.getElementById("progress-text").textContent="Upload en cours...";var formData=new FormData();formData.append("file",file);formData.append("upload_preset",UPLOAD_PRESET);formData.append("resource_type","auto");var xhr=new XMLHttpRequest();xhr.open("POST","https://api.cloudinary.com/v1_1/"+CLOUD_NAME+"/auto/upload");xhr.upload.onprogress=function(e){if(e.lengthComputable){var pct=Math.round(e.loaded/e.total*100);document.getElementById("progress-bar").style.width=pct+"%";document.getElementById("progress-text").textContent="Upload "+pct+"%...";} };xhr.onload=function(){if(xhr.status===200){var res=JSON.parse(xhr.responseText);document.getElementById("f-url").value=res.secure_url;document.getElementById("progress-text").textContent="OK ! "+file.name+" uploade !";document.getElementById("progress-bar").style.width="100%";document.getElementById("progress-bar").style.background="#22c55e";var ext=file.name.split(".").pop().toLowerCase();var typeMap={pdf:"pdf",mp3:"mp3",mp4:"video",jpg:"image",jpeg:"image",png:"image",gif:"image"};if(typeMap[ext])document.getElementById("f-type").value=typeMap[ext];}else{document.getElementById("progress-text").textContent="Erreur upload";document.getElementById("drop-text").style.display="block";document.getElementById("upload-progress").style.display="none";}};xhr.onerror=function(){document.getElementById("progress-text").textContent="Erreur reseau";document.getElementById("drop-text").style.display="block";document.getElementById("upload-progress").style.display="none";};xhr.send(formData);}
+function envoyer(cat,subcat,name,url,type,cb){var u=SCRIPT_URL+"?cat="+encodeURIComponent(cat)+"&subcat="+encodeURIComponent(subcat)+"&name="+encodeURIComponent(name)+"&url="+encodeURIComponent(url)+"&type="+encodeURIComponent(type);fetch(u).then(function(){cb();}).catch(function(){cb();});}
+function doSubmit(){var cat=document.getElementById("f-cat").value;var subcat=document.getElementById("f-subcat").value;var type=document.getElementById("f-type").value;var name=document.getElementById("f-name").value.trim();var url=document.getElementById("f-url").value.trim();var text=document.getElementById("f-text").value.trim();if(!cat){showMsg("Choisis une categorie.","error");return;}if(!name){showMsg("Entre un titre.","error");return;}if(type!=="texte"&&!url){showMsg("Entre le lien ou glisse un fichier.","error");return;}if(type==="texte"&&!text){showMsg("Entre le texte.","error");return;}document.getElementById("btn-submit").disabled=true;document.getElementById("btn-submit").textContent="Publication...";clearMsg();var mainUrl=type==="texte"?text:url;if(text&&type!=="texte"){envoyer(cat,subcat,name+" - Note",text,"texte",function(){envoyer(cat,subcat,name,mainUrl,type,function(){done(2);});});}else{envoyer(cat,subcat,name,mainUrl,type,function(){done(1);});}}
+function done(n){document.getElementById("btn-submit").disabled=false;document.getElementById("btn-submit").textContent="Publier";showMsg(n>1?n+" elements publies !":"Publie avec succes !","success");document.getElementById("f-name").value="";document.getElementById("f-url").value="";document.getElementById("f-text").value="";document.getElementById("drop-text").style.display="block";document.getElementById("upload-progress").style.display="none";document.getElementById("progress-bar").style.width="0%";document.getElementById("progress-bar").style.background="var(--red)";}
+function showMsg(msg,type){var el=document.getElementById("msg");el.className="msg "+type;el.textContent=msg;el.style.display="block";if(type==="success")setTimeout(function(){el.style.display="none";},4000);}
+function clearMsg(){document.getElementById("msg").style.display="none";}
+</script>
+</body>
+</html>
