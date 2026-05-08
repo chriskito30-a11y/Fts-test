@@ -82,6 +82,16 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:"DM
 .msg-input::placeholder{color:#444}
 .btn-send{background:var(--red);border:none;color:var(--white);width:38px;height:38px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;font-size:1rem}
 .btn-send:hover{background:#b71815}
+.btn-attach{background:transparent;border:1px solid var(--border);color:var(--muted);width:38px;height:38px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;font-size:1rem}
+.btn-attach:hover{border-color:var(--gold);color:var(--gold)}
+.upload-bar{display:none;padding:.5rem 1.4rem;background:#0e0e0e;border-top:1px solid var(--border);font-size:.72rem;color:var(--muted);flex-shrink:0;align-items:center;gap:.8rem}
+.upload-bar.show{display:flex}
+.upload-track{flex:1;background:#2a2a2a;border-radius:2px;height:4px;overflow:hidden}
+.upload-fill{height:100%;background:var(--red);width:0%;transition:width .2s;border-radius:2px}
+.msg-img{max-width:100%;max-height:260px;border-radius:3px;margin-top:.3rem;display:block;cursor:pointer}
+.msg-video{max-width:100%;max-height:260px;border-radius:3px;margin-top:.3rem;display:block}
+.msg-pdf{display:inline-flex;align-items:center;gap:.5rem;margin-top:.3rem;padding:.4rem .8rem;background:#141414;border:1px solid var(--border);border-radius:3px;font-size:.75rem;color:var(--gold);text-decoration:none}
+.msg-pdf:hover{border-color:var(--gold)}
 
 /* MODIFICATION : STYLE DES PILLS (Nouveau) */
 .pill-container{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.4rem}
@@ -197,8 +207,14 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:"DM
       </div>
     </div>
     <div class="messages" id="messages"></div>
+    <div class="upload-bar" id="upload-bar">
+      <span id="upload-txt">Upload en cours…</span>
+      <div class="upload-track"><div class="upload-fill" id="upload-fill"></div></div>
+    </div>
     <div class="input-area">
       <div class="input-row">
+        <input type="file" id="file-input" accept="image/*,video/*,.pdf,.mp3" style="display:none" onchange="uploadMedia(this.files[0])">
+        <button class="btn-attach" onclick="document.getElementById('file-input').click()" title="Joindre un fichier">📎</button>
         <div class="input-wrap">
           <textarea class="msg-input" id="msg-input" placeholder="Écris un message…" rows="1"
             onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
@@ -221,6 +237,8 @@ const FIREBASE_CONFIG = {
 };
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6zQRcJLBGzmnrMQcFnnfiUwNTUbFTmL3Cg3Wv9HP6p9DXIVHlNdLd07a-QETaHX5NQ4mUr78lx_ox/pub?gid=199619478&single=true&output=csv";
 const ADMIN_PWD = "admin2026";
+const CLOUD_NAME = "dsylvtwqr";
+const UPLOAD_PRESET = "FaisTonShow";
 
 let db, firebaseOk = false;
 let uid, userData;
@@ -426,9 +444,14 @@ function appendMsg(m, own, key){
   const wrap=document.getElementById("messages");
   const div=document.createElement("div");
   div.className="msg "+(own?"own":"other");
+  const isMedia = m.text && m.text.startsWith("[media]");
+  const mediaUrl = isMedia ? m.text.slice(7) : null;
   div.innerHTML=`
     <div class="msg-meta">${!own?`<span class="msg-author">${esc(m.name)}</span>`:""} <span>${new Date(m.ts).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</span></div>
-    <div class="msg-bubble">${esc(m.text).replace(/\n/g,"<br>")}</div>
+    ${isMedia
+      ? `<div class="msg-bubble">${renderMedia(mediaUrl)}</div>`
+      : `<div class="msg-bubble">${esc(m.text).replace(/\n/g,"<br>")}</div>`
+    }
     ${adminMode?`<button class="btn-del-msg" onclick="deleteMsg('${key}')">🗑</button>`:""}`;
   wrap.appendChild(div); scrollBottom();
 }
@@ -440,6 +463,66 @@ function checkAdminPwd(){
   if(document.getElementById("admin-pwd-input").value===ADMIN_PWD){ closeAdminModal(); adminMode=true; document.getElementById("admin-bar").classList.add("show"); switchChannel(currentChannel); }
 }
 function exitAdmin(){ adminMode=false; document.getElementById("admin-bar").classList.remove("show"); switchChannel(currentChannel); }
+function uploadMedia(file){
+  if(!file)return;
+  if(file.size>100*1024*1024){alert("Fichier trop volumineux (max 100 Mo)");return;}
+  const bar=document.getElementById("upload-bar");
+  const fill=document.getElementById("upload-fill");
+  const txt=document.getElementById("upload-txt");
+  bar.classList.add("show");
+  fill.style.width="0%";
+  fill.style.background="var(--red)";
+  txt.textContent="Upload en cours…";
+  const fd=new FormData();
+  fd.append("file",file);
+  fd.append("upload_preset",UPLOAD_PRESET);
+  fd.append("resource_type","auto");
+  const xhr=new XMLHttpRequest();
+  xhr.open("POST","https://api.cloudinary.com/v1_1/"+CLOUD_NAME+"/auto/upload");
+  xhr.upload.onprogress=function(e){
+    if(e.lengthComputable){
+      const pct=Math.round(e.loaded/e.total*100);
+      fill.style.width=pct+"%";
+      txt.textContent="Upload "+pct+"%…";
+    }
+  };
+  xhr.onload=function(){
+    if(xhr.status===200){
+      const res=JSON.parse(xhr.responseText);
+      fill.style.background="#22c55e";
+      txt.textContent="✓ "+file.name;
+      setTimeout(function(){bar.classList.remove("show");},2000);
+      document.getElementById("file-input").value="";
+      // Send as message with special prefix
+      if(firebaseOk&&userData){
+        db.ref("fts_forum/messages/"+currentChannel).push({
+          name:userData.name, text:"[media]"+res.secure_url, ts:Date.now()
+        });
+      }
+    }else{
+      txt.textContent="Erreur upload";
+      setTimeout(function(){bar.classList.remove("show");},3000);
+    }
+  };
+  xhr.onerror=function(){
+    txt.textContent="Erreur réseau";
+    setTimeout(function(){bar.classList.remove("show");},3000);
+  };
+  xhr.send(fd);
+}
+function renderMedia(url){
+  const ext=url.split("?")[0].split(".").pop().toLowerCase();
+  if(["jpg","jpeg","png","gif","webp"].includes(ext))
+    return `<img class="msg-img" src="${url}" onclick="window.open('${url}')">`;
+  if(["mp4","mov","webm"].includes(ext))
+    return `<video class="msg-video" src="${url}" controls></video>`;
+  if(ext==="mp3")
+    return `<audio controls style="margin-top:.3rem;width:100%"><source src="${url}"></audio>`;
+  if(ext==="pdf")
+    return `<a class="msg-pdf" href="${url}" target="_blank">📄 Ouvrir le PDF</a>`;
+  return `<a class="msg-pdf" href="${url}" target="_blank">📎 Fichier joint</a>`;
+}
+
 function handleKey(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function autoResize(el){el.style.height="auto";el.style.height=el.scrollHeight+"px";}
 </script>
