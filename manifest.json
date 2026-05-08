@@ -2,7 +2,7 @@
   "name": "Fais Ton Show",
   "short_name": "FTS",
   "description": "Espace membres — Fais Ton Show",
-  "start_url": "/membres.html",
+  "start_url": "Fts-test/membres.html",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
