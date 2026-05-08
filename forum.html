@@ -473,7 +473,7 @@ function appendMsg(m, own, key){
   div.innerHTML=`
     <div class="msg-meta">${!own?`<span class="msg-author">${esc(m.name)}</span>`:""} <span>${new Date(m.ts).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</span></div>
     ${isMedia?`<div class="msg-bubble">${renderMedia(mediaUrl)}</div>`:`<div class="msg-bubble">${esc(m.text).replace(/\n/g,"<br>")}</div>`}
-    ${adminMode?`<button class="btn-del-msg" onclick="deleteMsg('${key}')">\U0001F5D1</button>`:""}`;
+    ${adminMode?`<button class="btn-del-msg" onclick="deleteMsg('${key}')">🗑</button>`:""}`;
   wrap.appendChild(div); scrollBottom();
 }
 
